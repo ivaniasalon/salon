@@ -73,7 +73,6 @@
 .servicio-card img {
     border-radius: 10px;
     display: block;
-    margin: auto;
     width: 150px;
     height: 150px;
     object-fit: cover;
@@ -81,7 +80,25 @@
     background: var(--rosa-suave);
     margin-bottom: 1em;
     box-shadow: 0 2px 8px #e573b322;
-    transition: border 0.18s;
+    transition: border 0.18s, opacity 2.5s;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    will-change: opacity;
+}
+
+.servicio-img-wrap {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 1em;
+}
+
+.servicio-img.flip {
+    transform: rotateY(90deg);
 }
 
 .servicio-card p {
