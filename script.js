@@ -1,135 +1,64 @@
-const servicios = [
-    {
-        nombre: "Manicure de lujo",
-        descripcion: "Manicure profesional con esmaltes premium y decoración artística.",
-        precio: 100,
-        imagenes: [
-            "Manicure/01.jpg",
-            "Manicure/02.jpg",
-        ]
-    },
-    {
-        nombre: "Peinado glamoroso",
-        descripcion: "Peinado elegante para eventos especiales y sesiones de fotos.",
-        precio: 180,
-        imagenes: [
-            "Peinados/01.jpeg",
-            "Peinados/02.jpg"
-        ]
-    },
-    {
-        nombre: "Coloración de cabello",
-        descripcion: "Tintura profesional con productos de alta gama y asesoría personalizada.",
-        precio: 250,
-        imagenes: [
-            "Coloración/01.jpg",
-            "Coloración/02.webp"
-        ]
-    },
-    {
-        nombre: "Tratamiento facial",
-        descripcion: "Limpieza profunda, hidratación y rejuvenecimiento facial.",
-        precio: 220,
-        imagenes: [
-            "Tratamiento/01.jpeg",
-            "Tratamiento/02.jpeg"
-        ]
+
+
+const galeriaServicios = {
+    'Servicios': [
+        { foto: 'img/01.jpg', descripcion: 'Manicure y Pedicure' },
+        { foto: 'img/02.jpeg', descripcion: 'Uñas acrílicas y gel' },
+        { foto: 'img/03.jpg', descripcion: 'Peinados y cortes' },
+        { foto: 'img/04.jpg', descripcion: 'Maquillaje' }
+    ]
+};
+let categoriaActual = 'Servicios', pedidoServicios = [];
+
+const renderServicios = () => {
+    const cont = document.getElementById('lista-servicios');
+    cont.innerHTML = galeriaServicios[categoriaActual].map((serv, i) => `
+    <div class="servicio-card">
+      <img src="${serv.foto}" alt="Servicio">
+      <p>${serv.descripcion}</p>
+      <button class="agregar-btn" data-idx="${i}">Agregar</button>
+    </div>
+  `).join('');
+    cont.querySelectorAll('.agregar-btn').forEach(btn =>
+        btn.onclick = e => agregarAlPedido(+btn.dataset.idx)
+    );
+};
+
+const agregarAlPedido = idx => {
+    const servicio = galeriaServicios[categoriaActual][idx];
+    if (!pedidoServicios.includes(servicio)) {
+        pedidoServicios.push(servicio);
+        renderPedido();
     }
-];
+};
 
+const renderPedido = () => {
+    let pedidoDiv = document.getElementById('pedido-servicios');
+    if (!pedidoDiv) {
+        pedidoDiv = document.createElement('div');
+        pedidoDiv.id = 'pedido-servicios';
+        document.querySelector('main').insertBefore(pedidoDiv, document.querySelector('#contacto'));
+    }
+    pedidoDiv.innerHTML = pedidoServicios.length
+        ? `<strong>Servicios seleccionados:</strong><ul>${pedidoServicios.map((s, i) => `<li>${s.descripcion} <button class='btn-quitar' onclick='eliminarDelPedido(${i})'>Quitar</button></li>`).join('')}</ul>`
+        : '<em>No has agregado servicios aún.</em>';
+};
 
-function mostrarServicios() {
-    const lista = document.getElementById('servicios-lista');
-    lista.innerHTML = '';
-    servicios.forEach(servicio => {
-        const tarjeta = document.createElement('div');
-        tarjeta.className = 'tarjeta-servicio';
-        let imgHtml = '';
-        if (servicio.imagen) {
-            imgHtml = `<img src="${servicio.imagen}" alt="${servicio.nombre}" style="cursor:pointer" onclick="window.open('${servicio.imagen}','_blank')" onerror="this.onerror=null;this.src='https://via.placeholder.com/90x90?text=Servicio';">`;
-        } else {
-            imgHtml = `<img src="https://via.placeholder.com/90x90?text=Servicio" alt="${servicio.nombre}">`;
-        }
-        tarjeta.innerHTML = `
-            ${imgHtml}
-            <div class="nombre">${servicio.nombre}</div>
-            <div class="descripcion">${servicio.descripcion}</div>
-            <div class="precio">$${servicio.precio ? servicio.precio.toLocaleString('es-CO', { minimumFractionDigits: 0 }) : ''}</div>
-        `;
-        lista.appendChild(tarjeta);
-    });
-}
+const eliminarDelPedido = idx => {
+    pedidoServicios.splice(idx, 1);
+    renderPedido();
+};
 
+const enviarWhatsApp = () => {
+    if (!pedidoServicios.length) return alert('Por favor selecciona al menos un servicio antes de enviar tu pedido por WhatsApp.');
+    const plural = pedidoServicios.length > 1;
+    const msg = `Hola, quiero agendar ${plural ? 'estos servicios' : 'este servicio'}:%0A` + pedidoServicios.map(s => `- ${s.descripcion}%0A`).join('');
+    window.open(`https://wa.me/50558805307?text=${msg}`);
+};
 
-
-
-window.onload = mostrarServicios;
-
-// Modal para mostrar imagen grande
-function crearModalImagen() {
-    let modal = document.createElement('div');
-    modal.id = 'modal-imagen';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100vw';
-    modal.style.height = '100vh';
-    modal.style.background = 'rgba(0,0,0,0.7)';
-    modal.style.display = 'flex';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.zIndex = '9999';
-    modal.style.cursor = 'pointer';
-    modal.innerHTML = `
-        <button id="modal-prev" style="position:absolute;left:5vw;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.7);border:none;border-radius:50%;width:40px;height:40px;font-size:2rem;cursor:pointer;">&#8592;</button>
-        <img id="modal-img" src="" style="max-width:70vw;max-height:70vh;border-radius:24px;box-shadow:0 8px 32px #000;">
-        <button id="modal-next" style="position:absolute;right:5vw;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.7);border:none;border-radius:50%;width:40px;height:40px;font-size:2rem;cursor:pointer;">&#8594;</button>
-    `;
-    modal.onclick = function (e) {
-        if (e.target === modal) {
-            document.body.removeChild(modal);
-        }
-    };
-    document.body.appendChild(modal);
-    return modal;
-}
-
-// Modifica mostrarServicios para usar el modal
-function mostrarServicios() {
-    const lista = document.getElementById('servicios-lista');
-    lista.innerHTML = '';
-    servicios.forEach(servicio => {
-        const tarjeta = document.createElement('div');
-        tarjeta.className = 'tarjeta-servicio';
-        let imgHtml = '';
-        let primeraImg = (servicio.imagenes && servicio.imagenes.length) ? servicio.imagenes[0] : "https://via.placeholder.com/90x90?text=Servicio";
-        imgHtml = `<img src="${primeraImg}" alt="${servicio.nombre}" style="cursor:pointer" />`;
-        tarjeta.innerHTML = `
-            ${imgHtml}
-            <div class="nombre">${servicio.nombre}</div>
-            <div class="descripcion">${servicio.descripcion}</div>
-            <div class="precio">$${servicio.precio ? servicio.precio.toLocaleString('es-CO', { minimumFractionDigits: 0 }) : ''}</div>
-        `;
-        // Evento para mostrar modal con navegación
-        tarjeta.querySelector('img').onclick = function () {
-            let modal = document.getElementById('modal-imagen');
-            if (!modal) modal = crearModalImagen();
-            let idx = 0;
-            let imagenes = servicio.imagenes && servicio.imagenes.length ? servicio.imagenes : [this.src];
-            const modalImg = modal.querySelector('#modal-img');
-            modalImg.src = imagenes[idx];
-            // Navegación
-            modal.querySelector('#modal-prev').onclick = function (e) {
-                e.stopPropagation();
-                idx = (idx - 1 + imagenes.length) % imagenes.length;
-                modalImg.src = imagenes[idx];
-            };
-            modal.querySelector('#modal-next').onclick = function (e) {
-                e.stopPropagation();
-                idx = (idx + 1) % imagenes.length;
-                modalImg.src = imagenes[idx];
-            };
-        };
-        lista.appendChild(tarjeta);
-    });
-}
+window.onload = () => {
+    renderServicios();
+    renderPedido();
+    const btnWsp = document.getElementById('btn-wsp');
+    if (btnWsp) btnWsp.onclick = enviarWhatsApp;
+};
