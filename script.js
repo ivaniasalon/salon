@@ -1,70 +1,11 @@
-// Ventana flotante de chat con WhatsApp y TikTok
-function crearVentanaChat() {
-    if (document.getElementById('ventana-chat')) return;
-    const div = document.createElement('div');
-    div.id = 'ventana-chat';
-    div.style.position = 'fixed';
-    div.style.right = '2.2em';
-    div.style.bottom = '2.2em';
-    div.style.zIndex = '9999';
-    div.style.background = 'rgba(255,255,255,0.98)';
-    div.style.borderRadius = '1.5em';
-    div.style.boxShadow = '0 5px 20px #e573b355';
-    div.style.padding = '0.7em 1.2em 0.7em 1.2em';
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    div.style.gap = '1.1em';
-    div.style.transition = 'opacity 0.3s, transform 0.2s';
-    div.style.opacity = '1';
-    div.style.cursor = 'pointer';
-    // WhatsApp
-    const btnWsp = document.createElement('button');
-    btnWsp.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:2.1em;height:2.1em;vertical-align:middle;">';
-    btnWsp.style.background = 'none';
-    btnWsp.style.border = 'none';
-    btnWsp.style.cursor = 'pointer';
-    btnWsp.title = 'Chatea por WhatsApp';
-    btnWsp.onclick = function (e) {
-        e.stopPropagation();
-        window.open('https://wa.me/50558805307', '_blank');
-    };
-    // TikTok
-    const btnTiktok = document.createElement('button');
-    btnTiktok.innerHTML = '<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok" style="width:2.1em;height:2.1em;vertical-align:middle;filter:invert(0.1) grayscale(0.2);">';
-    btnTiktok.style.background = 'none';
-    btnTiktok.style.border = 'none';
-    btnTiktok.style.cursor = 'pointer';
-    btnTiktok.title = 'Ver TikTok de la empresa';
-    btnTiktok.onclick = function (e) {
-        e.stopPropagation();
-        window.open('https://www.tiktok.com/@jen_yehu', '_blank'); // Cambia el usuario por el de la empresa
-    };
-    div.appendChild(btnWsp);
-    div.appendChild(btnTiktok);
-    document.body.appendChild(div);
-}
-
-function actualizarVentanaChat() {
-    const chat = document.getElementById('ventana-chat');
-    const btnWsp = document.getElementById('btn-wsp');
-    if (!chat || !btnWsp) return;
-    // Si el botón de WhatsApp está visible en el viewport, ocultar la ventana de chat
-    const rect = btnWsp.getBoundingClientRect();
-    const visible = rect.top < window.innerHeight && rect.bottom > 0;
-    chat.style.opacity = visible ? '0' : '1';
-    chat.style.pointerEvents = visible ? 'none' : 'auto';
-}
-
-window.addEventListener('scroll', actualizarVentanaChat);
-window.addEventListener('resize', actualizarVentanaChat);
-
+// ...existing code...
 
 const galeriaServicios = {
     'Servicios': [
-        { fotos: ['img/01.jpg', 'img/05.webp'], descripcion: 'Manicure y Pedicure' },
-        { fotos: ['img/02.jpeg', 'img/06.jpeg'], descripcion: 'Uñas acrílicas y gel' },
-        { fotos: ['img/03.jpg', 'img/07.jpg', 'img/08.webp'], descripcion: 'Peinados y cortes' },
-        { fotos: ['img/04.jpg', 'img/09.jpg'], descripcion: 'Maquillaje' }
+        { fotos: ['img/01.jpg', 'img/05.webp', 'img/10.webp', 'img/11.jpeg', 'img/12.jpeg', 'img/13.jpg', 'img/14.jpg', 'img/15.jpg'], descripcion: 'Manicure y Pedicure' },
+        { fotos: ['img/02.jpeg', 'img/06.jpeg', 'img/17.jpg', 'img/20.jpg', 'img/21.webp'], descripcion: 'Uñas acrílicas y gel' },
+        { fotos: ['img/03.jpg', 'img/07.jpg', 'img/08.webp', 'img/16.png'], descripcion: 'Peinados y cortes' },
+        { fotos: ['img/04.jpg', 'img/09.jpg', 'img/18.webp', 'img/19.png'], descripcion: 'Maquillaje' }
     ]
 };
 let categoriaActual = 'Servicios', pedidoServicios = [];
@@ -94,49 +35,55 @@ function iniciarCarruselesImagenes() {
         let idxImg = 0;
         const card = document.querySelector(`.servicio-card[data-idx='${i}']`);
         if (!card) return;
-        const imgA = card.querySelector('.img-a');
-        const imgB = card.querySelector('.img-b');
-        if (!imgA || !imgB) return;
-        if (serv._interval) clearInterval(serv._interval);
-        imgA.style.opacity = 1;
-        imgB.style.opacity = 0;
-        imgA.src = serv.fotos[0];
-        imgB.src = serv.fotos[1] || serv.fotos[0];
-        let mostrarA = false;
-        function startInterval() {
-            serv._interval = setInterval(() => {
-                const nextIdx = (idxImg + 1) % serv.fotos.length;
-                if (mostrarA) {
-                    // imgA va a mostrar la siguiente imagen
-                    imgA.src = serv.fotos[nextIdx];
-                    imgA.style.transition = 'opacity 2.5s';
-                    imgB.style.transition = 'opacity 2.5s';
-                    imgA.style.opacity = 1;
-                    imgB.style.opacity = 0;
-                } else {
-                    // imgB va a mostrar la siguiente imagen
-                    imgB.src = serv.fotos[nextIdx];
-                    imgA.style.transition = 'opacity 2.5s';
-                    imgB.style.transition = 'opacity 2.5s';
-                    imgA.style.opacity = 0;
-                    imgB.style.opacity = 1;
-                }
-                idxImg = nextIdx;
-                mostrarA = !mostrarA;
-            }, 5500);
-        }
-        function stopInterval() {
-            if (serv._interval) clearInterval(serv._interval);
-        }
-        startInterval();
+        // Elimina imágenes previas
         const imgWrap = card.querySelector('.servicio-img-wrap');
+        imgWrap.innerHTML = '';
+        // Crea todas las imágenes y las apila
+        const imgs = serv.fotos.map((src, j) => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Servicio';
+            img.className = 'servicio-img';
+            img.style.position = 'absolute';
+            img.style.left = 0;
+            img.style.top = 0;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.opacity = j === 0 ? 1 : 0;
+            img.style.transition = 'opacity 2s';
+            imgWrap.appendChild(img);
+            return img;
+        });
+        let interval, timeout;
+        function showNext() {
+            const prev = idxImg;
+            idxImg = (idxImg + 1) % imgs.length;
+            imgs[idxImg].style.transition = 'opacity 2s';
+            imgs[prev].style.transition = 'opacity 2s';
+            imgs[idxImg].style.opacity = 1;
+            imgs[prev].style.opacity = 0;
+            timeout = setTimeout(() => {
+                showNext();
+            }, 5000); // 3s visible + 2s transición
+        }
+        function startLoop() {
+            // Inicializa todas en 0 excepto la actual
+            imgs.forEach((img, j) => img.style.opacity = j === idxImg ? 1 : 0);
+            timeout = setTimeout(() => {
+                showNext();
+            }, 3000); // 3s visible antes de empezar la transición
+        }
+        function stopLoop() {
+            if (timeout) clearTimeout(timeout);
+        }
+        startLoop();
         // Pausar con mouse/touch
-        imgWrap.onmousedown = stopInterval;
-        imgWrap.ontouchstart = stopInterval;
+        imgWrap.onmousedown = stopLoop;
+        imgWrap.ontouchstart = stopLoop;
         // Reanudar con mouseup/touchend/mouseleave
-        imgWrap.onmouseup = startInterval;
-        imgWrap.ontouchend = startInterval;
-        imgWrap.onmouseleave = startInterval;
+        imgWrap.onmouseup = startLoop;
+        imgWrap.ontouchend = startLoop;
+        imgWrap.onmouseleave = startLoop;
     });
 };
 
@@ -153,7 +100,8 @@ const renderPedido = () => {
     if (!pedidoDiv) {
         pedidoDiv = document.createElement('div');
         pedidoDiv.id = 'pedido-servicios';
-        document.querySelector('main').insertBefore(pedidoDiv, document.querySelector('#contacto'));
+        // Solo insertamos el div, no el botón, ya que el botón está fijo en el HTML
+        document.querySelector('main').insertBefore(pedidoDiv, document.getElementById('btn-wsp'));
     }
     pedidoDiv.innerHTML = pedidoServicios.length
         ? `<strong>Servicios seleccionados:</strong><ul>${pedidoServicios.map((s, i) => `<li>${s.descripcion} <button class='btn-quitar' onclick='eliminarDelPedido(${i})'>Quitar</button></li>`).join('')}</ul>`
@@ -176,21 +124,16 @@ const enviarWhatsApp = () => {
 window.onload = () => {
     renderServicios();
     renderPedido();
+    // Asignar evento al botón de WhatsApp si existe
     const btnWsp = document.getElementById('btn-wsp');
     if (btnWsp) btnWsp.onclick = enviarWhatsApp;
-    crearVentanaChat();
-    actualizarVentanaChat();
     // Advertir si hay servicios agregados al intentar cerrar/recargar
     window.addEventListener('beforeunload', function (e) {
         if (pedidoServicios.length > 0) {
-            // Scroll al área de servicios agregados y WhatsApp
             setTimeout(() => {
                 const pedidoDiv = document.getElementById('pedido-servicios');
                 if (pedidoDiv) pedidoDiv.scrollIntoView({ behavior: 'smooth' });
-                const btnWsp = document.getElementById('btn-wsp');
-                if (btnWsp) btnWsp.scrollIntoView({ behavior: 'smooth' });
             }, 0);
-            // Mensaje personalizado (algunos navegadores solo muestran el mensaje por defecto)
             const mensaje = 'Tienes servicios agregados. ¿Quieres enviarlos por WhatsApp antes de salir?';
             e.preventDefault();
             e.returnValue = mensaje;
