@@ -117,7 +117,7 @@ const enviarWhatsApp = () => {
     if (!pedidoServicios.length) return alert('Por favor selecciona al menos un servicio antes de enviar tu pedido por WhatsApp.');
     const plural = pedidoServicios.length > 1;
     const msg = `Hola, quiero agendar ${plural ? 'estos servicios' : 'este servicio'}:%0A` + pedidoServicios.map(s => `- ${s.descripcion}%0A`).join('');
-    window.open(`https://wa.me/50558805307?text=${msg}`);
+    window.open(`https://wa.me/50588282598?text=${msg}`);
 };
 
 
